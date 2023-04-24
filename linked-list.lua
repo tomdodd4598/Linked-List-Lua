@@ -6,7 +6,6 @@ local helpers = {}
 local item = require "item"
 
 function helpers.insertItem(start, val, insertBefore)
-    print(string.format("Creating item: %s", val))
     local current, previous = start, nil
 
     while current ~= nil and not insertBefore(val, current) do
@@ -80,15 +79,15 @@ function helpers.printRecursive(start)
 end
 
 function helpers.printFold(start)
-    local fSome = function(current, _, accumulator) return string.format("%s%s, ", accumulator, current:ValueToString()) end
-    local fLast = function(current, accumulator) return string.format("%s%s\n", accumulator, current:ValueToString()) end
+    local fSome = function(current, _, accumulator) return string.format("%s%s, ", accumulator, tostring(current.value)) end
+    local fLast = function(current, accumulator) return string.format("%s%s\n", accumulator, tostring(current.value)) end
     local fEmpty = function(accumulator) return accumulator end
     io.write(item.fold(fSome, fLast, fEmpty, "", start))
 end
 
 function helpers.printFoldback(start)
-    local fSome = function(current, _, innerVal) return string.format("%s, %s", current:ValueToString(), innerVal) end
-    local fLast = function(current) return string.format("%s\n", current:ValueToString()) end
+    local fSome = function(current, _, innerVal) return string.format("%s, %s", tostring(current.value), innerVal) end
+    local fLast = function(current) return string.format("%s\n", tostring(current.value)) end
     local fEmpty = function() return "" end
     io.write(item.foldback(fSome, fLast, fEmpty, function(x) return x end, start))
 end
@@ -103,16 +102,12 @@ package.preload[ "item" ] = function( ... ) local arg = _G.arg;
 local item = {}
 
 function item:New(value, next)
+    print(string.format("Creating item: %s", value))
     return setmetatable({value = value, next = next}, self)
 end
 
-function item:ValueToString()
-    return tostring(self.value)
-end
-
 function item:PrintGetNext()
-    io.write(self:ValueToString())
-    io.write(self.next == nil and "\n" or ", ")
+    io.write(string.format("%s%s", self.value, self.next == nil and "\n" or ", "))
     return self.next
 end
 
@@ -220,14 +215,14 @@ local function compareDigits(str, oth)
     return -1
 end
 
-local function insertBefore(val, oth)
-    local digitCmp = compareDigits(val, oth.value)
+local function insertBefore(val, item)
+    local digitCmp = compareDigits(val, item.value)
     if digitCmp < 0 then
         return true
     elseif digitCmp > 0 then
         return false
     else
-        return val <= oth.value
+        return val <= item.value
     end
 end
 
@@ -238,7 +233,6 @@ end
 local start = nil
 
 local begin = true
-local input = nil
 
 while true do
     if not begin then
@@ -248,7 +242,7 @@ while true do
     end
 
     print("Awaiting input...")
-    input = tostring(io.read())
+    local input = tostring(io.read())
 
     if input:len() == 0 then
         print("\nProgram terminated!")

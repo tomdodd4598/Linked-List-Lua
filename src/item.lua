@@ -1,16 +1,12 @@
 local item = {}
 
 function item:New(value, next)
+    print(string.format("Creating item: %s", value))
     return setmetatable({value = value, next = next}, self)
 end
 
-function item:ValueToString()
-    return tostring(self.value)
-end
-
 function item:PrintGetNext()
-    io.write(self:ValueToString())
-    io.write(self.next == nil and "\n" or ", ")
+    io.write(string.format("%s%s", self.value, self.next == nil and "\n" or ", "))
     return self.next
 end
 

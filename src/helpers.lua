@@ -3,7 +3,6 @@ local helpers = {}
 local item = require "item"
 
 function helpers.insertItem(start, val, insertBefore)
-    print(string.format("Creating item: %s", val))
     local current, previous = start, nil
 
     while current ~= nil and not insertBefore(val, current) do
@@ -77,15 +76,15 @@ function helpers.printRecursive(start)
 end
 
 function helpers.printFold(start)
-    local fSome = function(current, _, accumulator) return string.format("%s%s, ", accumulator, current:ValueToString()) end
-    local fLast = function(current, accumulator) return string.format("%s%s\n", accumulator, current:ValueToString()) end
+    local fSome = function(current, _, accumulator) return string.format("%s%s, ", accumulator, tostring(current.value)) end
+    local fLast = function(current, accumulator) return string.format("%s%s\n", accumulator, tostring(current.value)) end
     local fEmpty = function(accumulator) return accumulator end
     io.write(item.fold(fSome, fLast, fEmpty, "", start))
 end
 
 function helpers.printFoldback(start)
-    local fSome = function(current, _, innerVal) return string.format("%s, %s", current:ValueToString(), innerVal) end
-    local fLast = function(current) return string.format("%s\n", current:ValueToString()) end
+    local fSome = function(current, _, innerVal) return string.format("%s, %s", tostring(current.value), innerVal) end
+    local fLast = function(current) return string.format("%s\n", tostring(current.value)) end
     local fEmpty = function() return "" end
     io.write(item.foldback(fSome, fLast, fEmpty, function(x) return x end, start))
 end

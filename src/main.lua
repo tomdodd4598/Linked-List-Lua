@@ -42,14 +42,14 @@ local function compareDigits(str, oth)
     return -1
 end
 
-local function insertBefore(val, oth)
-    local digitCmp = compareDigits(val, oth.value)
+local function insertBefore(val, item)
+    local digitCmp = compareDigits(val, item.value)
     if digitCmp < 0 then
         return true
     elseif digitCmp > 0 then
         return false
     else
-        return val <= oth.value
+        return val <= item.value
     end
 end
 
@@ -60,7 +60,6 @@ end
 local start = nil
 
 local begin = true
-local input = nil
 
 while true do
     if not begin then
@@ -70,7 +69,7 @@ while true do
     end
 
     print("Awaiting input...")
-    input = tostring(io.read())
+    local input = tostring(io.read())
 
     if input:len() == 0 then
         print("\nProgram terminated!")
